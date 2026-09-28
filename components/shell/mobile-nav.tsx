@@ -16,8 +16,8 @@ export function MobileTopBar({ day }: { day: number }) {
     <>
       <div className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-line bg-bg/85 px-4 backdrop-blur-xl lg:hidden">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="grid size-7 place-items-center rounded-md border border-line-strong font-display text-[13px] font-semibold">
-            1<span className="text-accent">G</span>
+          <span className="grid size-7 place-items-center whitespace-nowrap rounded-md border border-line-strong font-display text-[12px] font-semibold">
+            <span>1<span className="text-accent">G</span></span>
           </span>
           <span className="font-mono text-[11px] text-faint">Day {day}/180</span>
         </Link>

@@ -14,8 +14,8 @@ export function Sidebar({ day, dueReviews, ai }: { day: number; dueReviews: numb
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-[232px] flex-col border-r border-line bg-bg/80 backdrop-blur-xl lg:flex">
       <Link href="/" className="group flex items-center gap-3 px-5 pb-6 pt-6">
-        <span className="grid size-8 place-items-center rounded-lg border border-line-strong bg-white/[0.03] font-display text-[15px] font-semibold tracking-tight">
-          1<span className="text-accent">G</span>
+        <span className="grid size-8 place-items-center whitespace-nowrap rounded-lg border border-line-strong bg-white/[0.03] font-display text-[13px] font-semibold tracking-tight">
+          <span>1<span className="text-accent">G</span></span>
         </span>
         <span className="leading-tight">
           <span className="block font-display text-[14px] text-fg">AI Engineering OS</span>

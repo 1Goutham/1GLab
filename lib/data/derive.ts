@@ -144,6 +144,7 @@ export function missionOf(st: LearnerState, energy: "low" | "medium" | "high" = 
       dsaFails: due.filter((r) => r.itemType === "dsa").length,
     },
     reviewsDoneToday,
+    journaledToday: st.journal.some((j) => j.date === st.today),
     signals: {
       videosWatched7d: st.events.filter((e) => e.day >= week7 && e.type === "video_watched").length,
       buildsDone7d: st.events.filter((e) => e.day >= week7 && (e.type === "lab_completed" || e.type === "mini_task_done" || e.type === "lab_started")).length,

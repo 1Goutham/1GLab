@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createHash, timingSafeEqual } from "node:crypto";
@@ -82,11 +83,14 @@ async function sessionUserId(): Promise<string | null> {
 
 export type User = typeof users.$inferSelect;
 
+/** One lookup per request: layout and page share the same user object (and so the same cached state). */
+const findUser = cache(async (id: string) => db.query.users.findFirst({ where: eq(users.id, id) }));
+
 /** For pages: redirects to /login when signed out, to /welcome before onboarding. */
 export async function requireUser(opts: { allowUnonboarded?: boolean } = {}): Promise<User> {
   const id = await sessionUserId();
   if (!id) redirect("/login");
-  const user = await db.query.users.findFirst({ where: eq(users.id, id) });
+  const user = await findUser(id);
   if (!user) redirect("/login?error=seed");
   if (!user.onboarded && !opts.allowUnonboarded) redirect("/welcome");
   return user;
@@ -96,7 +100,7 @@ export async function requireUser(opts: { allowUnonboarded?: boolean } = {}): Pr
 export async function getUserOrThrow(): Promise<User> {
   const id = await sessionUserId();
   if (!id) throw new UnauthorizedError();
-  const user = await db.query.users.findFirst({ where: eq(users.id, id) });
+  const user = await findUser(id);
   if (!user) throw new UnauthorizedError();
   return user;
 }

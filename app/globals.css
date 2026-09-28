@@ -128,6 +128,7 @@ body::after {
   scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }
 
+@layer components {
 /* ── Signature: bracketed actions ─────────────────────────────────────── */
 .bracket {
   display: inline-flex;
@@ -379,6 +380,56 @@ body::after {
   color: #7cc4ff;
 }
 
+
+/* ── Fields (underline style, from the portfolio's contact form) ───── */
+.field-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 0.5rem 0;
+  color: var(--fg);
+  font-size: 15px;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.3s ease;
+  border-radius: 0;
+}
+.field-input::placeholder {
+  color: var(--fg-faint);
+}
+.field-input:focus {
+  border-bottom-color: var(--accent);
+}
+textarea.field-input {
+  resize: vertical;
+  min-height: 2.6rem;
+}
+select.field-input option {
+  background: #0c0c0f;
+}
+.box-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  color: var(--fg);
+  font-size: 14.5px;
+  line-height: 1.55;
+  outline: none;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+.box-input:focus {
+  border-color: rgba(157, 255, 80, 0.5);
+  background: rgba(255, 255, 255, 0.03);
+}
+.box-input::placeholder {
+  color: var(--fg-faint);
+}
+
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -388,3 +439,4 @@ body::after {
     transition-duration: 0.01ms !important;
   }
 }
+

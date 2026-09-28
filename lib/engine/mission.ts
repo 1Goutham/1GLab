@@ -10,7 +10,7 @@
  */
 import type { Recommendation } from "./dsa";
 
-export type MissionKind = "dsa" | "learn" | "build" | "review";
+export type MissionKind = "dsa" | "learn" | "build" | "review" | "reflect";
 
 export type MissionItem = {
   kind: MissionKind;
@@ -108,9 +108,10 @@ export function buildMission(input: {
   labs: MissionLab[];
   reviewsDue: { count: number; minutes: number; dsaFails: number };
   reviewsDoneToday: number;
+  journaledToday: boolean;
   signals: MissionSignals;
 }): { items: MissionItem[]; note: string | null } {
-  const { week, dailyMinutes, dsa, dsaDoneToday, topics, labs, reviewsDue, reviewsDoneToday, signals } = input;
+  const { week, dailyMinutes, dsa, dsaDoneToday, topics, labs, reviewsDue, reviewsDoneToday, journaledToday, signals } = input;
   const items: MissionItem[] = [];
   let note: string | null = null;
 
@@ -213,6 +214,19 @@ export function buildMission(input: {
       domain: "systems",
     });
     if (signals.overdueReviews > 5 && !note) note = "Reviews are piling up. Clearing them today protects everything you've learned.";
+  } else {
+    // 04 — Reflect: nothing to review yet, so close the loop in the journal.
+    items.push({
+      kind: "reflect",
+      label: "REFLECT",
+      title: "Engineering journal",
+      mission: "What did you learn, what broke, how did you fix it? Ten honest minutes make tomorrow's mission smarter.",
+      minutes: 10,
+      href: "/journal",
+      cta: journaledToday ? "Open" : "Reflect",
+      done: journaledToday,
+      domain: "product",
+    });
   }
 
   // Fit the day into the budget: shrink the build first, never the concept.
