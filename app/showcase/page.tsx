@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { eq } from "drizzle-orm";
 import { ArrowUpRight } from "lucide-react";
 import { db } from "@/lib/db";
@@ -17,6 +18,7 @@ export const metadata = { title: "Showcase — Goutham G" };
  * notes, mentor conversations or reflections.
  */
 export default async function Showcase() {
+  await connection(); // always rendered per request — never touch the database at build time
   const owner = await db.query.users.findFirst({ where: eq(users.id, OWNER_ID) });
   const user = owner?.showcasePublic ? owner : await requireUser();
   const st = await loadState(user);
