@@ -25,9 +25,27 @@ export const OWNER_ID = "goutham";
 const MAX_AGE = 60 * 60 * 24 * 30;
 
 export function authMode(): "password" | "dev-open" | "misconfigured" {
-  if (process.env.OWNER_PASSWORD && process.env.AUTH_SECRET) return "password";
+  if (process.env.OWNER_PASSWORD && (process.env.AUTH_SECRET ?? "").length >= 32) return "password";
   if (process.env.NODE_ENV !== "production") return "dev-open";
   return "misconfigured";
+}
+
+/** Human-readable list of what's missing, shown on the sign-in page instead of a crash. */
+export function authProblems(): string[] {
+  const out: string[] = [];
+  if (!process.env.OWNER_PASSWORD) out.push("OWNER_PASSWORD is not set");
+  const secret = process.env.AUTH_SECRET ?? "";
+  if (!secret) out.push("AUTH_SECRET is not set");
+  else if (secret.length < 32) out.push(`AUTH_SECRET is only ${secret.length} characters — it needs at least 32`);
+  if (!process.env.OWNER_EMAIL) out.push("OWNER_EMAIL is not set (optional, but recommended)");
+  return out;
+}
+
+/** Classify a database failure so pages can explain it instead of returning a 500. */
+export function dbProblem(err: unknown): "seed" | "db" {
+  const e = err as { code?: string; cause?: { code?: string } };
+  const code = e?.cause?.code ?? e?.code;
+  return code === "42P01" ? "seed" : "db";
 }
 
 function secretKey() {
@@ -87,13 +105,21 @@ async function sessionUserId(): Promise<string | null> {
 export type User = typeof users.$inferSelect;
 
 /** One lookup per request: layout and page share the same user object (and so the same cached state). */
-const findUser = cache(async (id: string) => db.query.users.findFirst({ where: eq(users.id, id) }));
+const findUser = cache(async (id: string) => {
+  try {
+    return { user: await db.query.users.findFirst({ where: eq(users.id, id) }), problem: null };
+  } catch (err) {
+    console.error("[auth] user lookup failed", err);
+    return { user: undefined, problem: dbProblem(err) };
+  }
+});
 
 /** For pages: redirects to /login when signed out, to /welcome before onboarding. */
 export async function requireUser(opts: { allowUnonboarded?: boolean } = {}): Promise<User> {
   const id = await sessionUserId();
   if (!id) redirect("/login");
-  const user = await findUser(id);
+  const { user, problem } = await findUser(id);
+  if (problem) redirect(`/login?error=${problem}`);
   if (!user) redirect("/login?error=seed");
   if (!user.onboarded && !opts.allowUnonboarded) redirect("/welcome");
   return user;
@@ -103,7 +129,7 @@ export async function requireUser(opts: { allowUnonboarded?: boolean } = {}): Pr
 export async function getUserOrThrow(): Promise<User> {
   const id = await sessionUserId();
   if (!id) throw new UnauthorizedError();
-  const user = await findUser(id);
+  const { user } = await findUser(id);
   if (!user) throw new UnauthorizedError();
   return user;
 }
