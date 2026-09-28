@@ -2,7 +2,7 @@
   "name": "1goutham-ai-engineering-os",
   "version": "0.1.0",
   "private": true,
-  "description": "Goutham's personal AI Engineering OS — a six-month training system for becoming an advanced AI engineer.",
+  "description": "Goutham's personal AI Engineering OS \u2014 a six-month training system for becoming an advanced AI engineer.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -16,7 +16,8 @@
     "db:reset": "tsx scripts/seed.ts --reset",
     "db:setup": "drizzle-kit push --force && tsx scripts/seed.ts",
     "db:studio": "drizzle-kit studio",
-    "test": "tsx --test tests/*.test.ts"
+    "test": "tsx --test tests/*.test.ts",
+    "vercel-build": "npm run db:setup && next build"
   },
   "engines": {
     "node": ">=20.9"

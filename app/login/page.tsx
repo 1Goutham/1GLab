@@ -22,7 +22,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <p className="mt-2 text-sm text-muted">Today&apos;s mission is waiting.</p>
         {sp.error === "seed" ? (
           <div className="mt-8 rounded-lg border border-warn/30 bg-warn/5 p-4 text-sm leading-relaxed text-warn">
-            Signed in, but the database is empty — its tables haven&apos;t been created yet. From your machine, run:
+            Signed in, but the database is empty — its tables haven&apos;t been created yet. Redeploy on Vercel (Deployments → ⋯ → Redeploy): every deploy now creates the tables and loads the curriculum automatically. Or run it yourself:
             <pre className="mt-3 overflow-x-auto rounded bg-black/40 p-3 font-mono text-[12px] text-fg">DATABASE_URL=&quot;…your Vercel DATABASE_URL…&quot; npm run db:setup</pre>
             Then reload this page.
           </div>

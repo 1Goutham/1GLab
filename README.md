@@ -82,10 +82,7 @@ Each topic ships with curated resources, and each one says *why* you'd watch it.
 ## Deploying to Vercel
 
 1. **Database.** Create a Postgres database (Neon via the Vercel Marketplace is simplest) and copy the *pooled* connection string.
-2. **Schema and seed**, run from your machine against that database:
-   ```bash
-   DATABASE_URL="postgres://…" npm run db:setup
-   ```
+2. **Schema and seed happen automatically.** Vercel runs `npm run vercel-build`, which creates or updates the tables, seeds the curriculum (idempotent: your progress is never touched), then builds. `DATABASE_URL` just has to be set before deploying.
 3. **Import the repo** in Vercel and set these environment variables:
    - `DATABASE_URL`
    - `OWNER_EMAIL`
