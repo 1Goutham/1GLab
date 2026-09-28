@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import * as s from "@/lib/db/schema";
 
@@ -93,8 +93,4 @@ export async function videosForTopic(topicId: string, userId: string): Promise<V
       rating: byVideo.get(v.id)?.rating ?? null,
       embedId: v.kind === "video" ? youtubeId(v.url) : null,
     }));
-}
-
-export async function videoOwnedByTopic(videoId: number, topicId: string) {
-  return Boolean(await db.query.videoResources.findFirst({ where: and(eq(s.videoResources.id, videoId), eq(s.videoResources.topicId, topicId)) }));
 }

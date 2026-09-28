@@ -68,10 +68,13 @@ export async function destroySession() {
 }
 
 async function sessionUserId(): Promise<string | null> {
+  // Always read cookies first: it marks every authenticated render as
+  // request-time, so learner data is never frozen into a static prerender.
+  const jar = await cookies();
   const mode = authMode();
   if (mode === "dev-open") return OWNER_ID;
   if (mode === "misconfigured") return null;
-  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  const token = jar.get(SESSION_COOKIE)?.value;
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, secretKey(), { algorithms: ["HS256"] });

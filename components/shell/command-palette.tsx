@@ -80,10 +80,7 @@ export function CommandPalette({ ctx }: { ctx: Ctx }) {
   }, [router]);
 
   useEffect(() => {
-    if (q.trim().length < 2) {
-      setHits([]);
-      return;
-    }
+    if (q.trim().length < 2) return;
     const ctrl = new AbortController();
     const t = setTimeout(async () => {
       try {
@@ -98,6 +95,8 @@ export function CommandPalette({ ctx }: { ctx: Ctx }) {
       ctrl.abort();
     };
   }, [q]);
+
+  const shownHits = q.trim().length < 2 ? [] : hits;
 
   const go = (href: string) => {
     setOpen(false);
@@ -115,7 +114,7 @@ export function CommandPalette({ ctx }: { ctx: Ctx }) {
     { label: "Add task", icon: Plus, href: "/tasks?new=1" },
     { label: "Plan my week", icon: CalendarRange, href: "/tasks?plan=1" },
     { label: "Log learning", icon: NotebookPen, href: "/journal" },
-    { label: "Add note", icon: NotebookPen, href: "/journal?note=1" },
+    { label: "Add note", icon: NotebookPen, href: ctx.continueHref ? `${ctx.continueHref}#notes` : "/journal" },
   ].filter(Boolean) as { label: string; icon: typeof Target; href: string; hint?: string }[];
 
   return (
@@ -152,9 +151,9 @@ export function CommandPalette({ ctx }: { ctx: Ctx }) {
                 </div>
                 <Command.List className="max-h-[58vh] overflow-y-auto p-2 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:pb-1.5 [&_[cmdk-group-heading]]:pt-3 [&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:text-[10.5px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.14em] [&_[cmdk-group-heading]]:text-faint">
                   <Command.Empty className="px-4 py-8 text-center text-sm text-muted">Nothing found. Try a concept, like “attention”.</Command.Empty>
-                  {hits.length > 0 && (
+                  {shownHits.length > 0 && (
                     <Command.Group heading="Results">
-                      {hits.map((h, i) => (
+                      {shownHits.map((h, i) => (
                         <Item key={`${h.href}-${i}`} value={`${h.title} ${h.type} ${q}`} onSelect={() => go(h.href)}>
                           <span className="w-16 shrink-0 font-mono text-[10.5px] uppercase text-faint">{h.type}</span>
                           <span className="min-w-0 flex-1">

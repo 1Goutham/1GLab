@@ -7,6 +7,7 @@ import * as s from "@/lib/db/schema";
 import { action, isoDate, slug } from "./util";
 import { afterProgress, logEvent } from "@/lib/data/effects";
 import { loadState } from "@/lib/data/state";
+import { todayISO } from "@/lib/engine/dates";
 
 /* ── Journal ─────────────────────────────────────────────────────────── */
 
@@ -121,7 +122,7 @@ export const finishFocus = action(
     }
     // A reflection with something that broke is exactly what the journal is for.
     if (rest.learned || rest.wentWrong) {
-      const today = (await import("@/lib/engine/dates")).todayISO(user.timezone);
+      const today = todayISO(user.timezone);
       const entry = await db.query.journalEntries.findFirst({ where: and(eq(s.journalEntries.userId, user.id), eq(s.journalEntries.date, today)) });
       const append = (a: string, b: string) => (b ? (a ? `${a}\n${b}` : b) : a);
       const tag = `[${session.title}] `;

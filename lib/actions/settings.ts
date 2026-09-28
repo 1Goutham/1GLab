@@ -18,7 +18,18 @@ const profile = z.object({
   dsaConfidence: z.number().int().min(1).max(5),
   aiConfidence: z.number().int().min(1).max(5),
   startDate: isoDate,
-  timezone: z.string().max(60).optional(),
+  timezone: z
+    .string()
+    .max(60)
+    .refine((tz) => {
+      try {
+        new Intl.DateTimeFormat("en", { timeZone: tz });
+        return true;
+      } catch {
+        return false;
+      }
+    }, "Unknown timezone — use an IANA name like Asia/Kolkata")
+    .optional(),
 });
 
 /** First-run onboarding: save the essentials and enter the OS. */
@@ -34,12 +45,12 @@ export const updateProfile = action(profile.extend({ showcasePublic: z.boolean()
 
 /* ── Auth (plain server actions used by <form action>) ───────────────── */
 
-export async function login(_prev: { error: string } | null, form: FormData): Promise<{ error: string }> {
+export async function login(_prev: { error: string; email?: string } | null, form: FormData): Promise<{ error: string; email?: string }> {
   const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (!rateLimit(`login:${ip}`, 8, 15 * 60_000).ok) return { error: "Too many attempts. Take a breath and try again in a few minutes." };
   const email = String(form.get("email") ?? "");
+  if (!rateLimit(`login:${ip}`, 8, 15 * 60_000).ok) return { error: "Too many attempts. Take a breath and try again in a few minutes.", email };
   const password = String(form.get("password") ?? "");
-  if (!checkCredentials(email, password)) return { error: "That didn't match. Check the email and password." };
+  if (!checkCredentials(email, password)) return { error: "That didn't match. Check the email and password.", email };
   await createSession();
   const next = String(form.get("next") ?? "/");
   redirect(next.startsWith("/") && !next.startsWith("//") ? next : "/");

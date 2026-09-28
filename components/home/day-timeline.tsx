@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 export function DayTimeline({ day, activeDays, months }: { day: number; activeDays: Set<number>; months: { month: number; title: string }[] }) {
   return (
     <div className="w-full">
-      <div className="flex h-7 items-end gap-[2px]" aria-label={`Day ${day} of 180`}>
+      <div className="flex h-7 items-end gap-px sm:gap-[2px]" aria-label={`Day ${day} of 180`}>
         {Array.from({ length: 180 }, (_, i) => {
           const d = i + 1;
           const isToday = d === day;
@@ -18,7 +18,7 @@ export function DayTimeline({ day, activeDays, months }: { day: number; activeDa
             <span
               key={d}
               className={cn(
-                "flex-1 rounded-[1px] transition-colors",
+                "min-w-px flex-1 rounded-[1px] transition-colors",
                 isToday ? "h-7 bg-accent" : monthStart ? "h-5" : "h-3",
                 !isToday && (active ? "bg-white/55" : past ? "bg-white/15" : "bg-white/[0.06]"),
               )}

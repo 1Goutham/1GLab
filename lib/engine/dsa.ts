@@ -237,5 +237,18 @@ export function recommendProblems(input: {
     recs.push({ problem: p, kind, score, reason });
   }
 
-  return recs.sort((a, b) => b.score - a.score).slice(0, limit);
+  const top = recs.sort((a, b) => b.score - a.score).slice(0, limit);
+  // Several picks from the same pattern shouldn't all repeat the same "why".
+  const seen = new Map<string, number>();
+  for (const r of top) {
+    if (r.kind === "resolve") continue;
+    const n = seen.get(r.problem.pattern) ?? 0;
+    seen.set(r.problem.pattern, n + 1);
+    if (n === 0) continue;
+    r.reason =
+      r.problem.freq === 3
+        ? `Then this one: a classic ${r.problem.difficulty} ${patternName(r.problem.pattern)} problem interviewers love.`
+        : `Then this one: it pushes the same ${patternName(r.problem.pattern)} idea a step further.`;
+  }
+  return top;
 }

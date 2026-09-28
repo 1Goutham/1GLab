@@ -98,7 +98,7 @@ export async function offlineMentorReply(mode: MentorMode, messages: { role: str
     OFFLINE_NOTE +
     `**${topic.title}, simply:** ${lesson.levels.l1}\n\n**Mental model:** ${lesson.levels.l2.text.split("\n\n")[0]}\n\n` +
     (quiz
-      ? `Want to test your understanding?\n\n**${quiz.q}**\n${quiz.options.map((o, i) => `${String.fromCharCode(65 + i)}. ${o}`).join("\n")}\n\nReply with a letter.`
+      ? `Want to test your understanding?\n\n**${quiz.q}**\n\n${quiz.options.map((o, i) => `- **${String.fromCharCode(65 + i)}.** ${o}`).join("\n")}\n\nReply with a letter.`
       : `Open [the full lesson](/learn/${topic.id}) for the deeper levels.`)
   );
 }

@@ -1,5 +1,6 @@
 import "server-only";
 import { cache } from "react";
+import { connection } from "next/server";
 import { and, asc, desc, eq, gte, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import * as s from "@/lib/db/schema";
@@ -13,6 +14,7 @@ import { addDays, programDay, programMonth, programWeek, todayISO } from "@/lib/
  * view (mission, scores, insights, weekly review) consistent.
  */
 export const loadState = cache(async (user: User) => {
+  await connection(); // learner state is always read at request time
   const today = todayISO(user.timezone);
   const since60 = addDays(today, -60);
 

@@ -193,8 +193,8 @@ export function continueTopic(st: LearnerState) {
     .sort((a, b) => (b.startedAt?.getTime() ?? 0) - (a.startedAt?.getTime() ?? 0))[0];
   const t = inProgress ? st.topics.find((x) => x.id === inProgress.topicId) : null;
   if (!t) return null;
-  const module = st.modules.find((m) => m.id === t.moduleId);
-  return { topic: t, module, level: inProgress!.levelReached };
+  const mod = st.modules.find((m) => m.id === t.moduleId);
+  return { topic: t, module: mod, level: inProgress!.levelReached };
 }
 
 export function monthStatus(st: LearnerState) {

@@ -11,10 +11,10 @@ export function LoginForm({ next }: { next: string }) {
     <form action={formAction} className="mt-10 space-y-6">
       <input type="hidden" name="next" value={next} />
       <Field label="Email">
-        <input name="email" type="email" autoComplete="email" required className="field-input" />
+        <input name="email" type="email" autoComplete="email" required defaultValue={state?.email} key={state?.email} className="field-input" />
       </Field>
       <Field label="Password">
-        <input name="password" type="password" autoComplete="current-password" required className="field-input" />
+        <input name="password" type="password" autoComplete="current-password" required autoFocus={Boolean(state?.error)} className="field-input" />
       </Field>
       {state?.error && <p className="text-sm text-bad">{state.error}</p>}
       <Button variant="primary" size="lg" className="w-full" disabled={pending}>
